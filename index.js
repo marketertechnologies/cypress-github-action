@@ -484,14 +484,9 @@ const getCiBuildId = async () => {
 /**
  * Forms entire command line like "npx cypress run ..."
  */
-const runTestsUsingCommandLine = async () => {
-  debug('Running Cypress tests using CLI command')
+const runTestsUsingCy2 = async () => {
+  debug('Running Cypress tests using sorry-cypress dashboard')
   const quoteArgument = isWindows() ? quoteWindowsArgument : I
-
-  const commandPrefix = core.getInput('command-prefix')
-  if (!commandPrefix) {
-    throw new Error('Expected command prefix')
-  }
 
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
@@ -503,12 +498,9 @@ const runTestsUsingCommandLine = async () => {
   let cmd = []
   // we need to split the command prefix into individual arguments
   // otherwise they are passed all as a single string
-  const parts = commandPrefix.split(' ')
-  cmd = cmd.concat(parts)
-  debug(`with concatenated command prefix: ${cmd.join(' ')}`)
 
   // push each CLI argument separately
-  cmd.push('cypress')
+  cmd.push('cy2')
   cmd.push('run')
   if (headless) {
     cmd.push('--headless')
@@ -620,9 +612,9 @@ const runTests = async () => {
     return execCommand(customCommand, true, 'run tests')
   }
 
-  const commandPrefix = core.getInput('command-prefix')
-  if (commandPrefix) {
-    return runTestsUsingCommandLine()
+  const sorryCypress = core.getInput('sorry-cypress')
+  if (sorryCypress) {
+    return runTestsUsingCy2()
   }
 
   debug('Running Cypress tests using NPM module API')
